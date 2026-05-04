@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRI-ÔMEGA | Cibersegurança & Forense Digital</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #04070f;
+    --bg2: #080d1a;
+    --panel: #0a1020;
+    --border: #1a2a44;
+    --cyan: #00d4ff;
+    --cyan2: #00a8cc;
+    --gold: #c8a84b;
+    --red: #ff3b3b;
+    --green: #32CD32;
+    --text: #c8d8e8;
+    --dim: #5a7a9a;
+    --white: #eef4ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6%;
+    height: 70px;
+    background: rgba(4, 7, 15, 0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 14px; }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+    color: var(--white);
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--dim);
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+  .nav-cta {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+    padding: 8px 20px;
+    text-decoration: none;
+    transition: all 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .nav-cta:hover { background: var(--cyan); color: var(--bg); }
+
+  /* HERO */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 160px 6% 80px;
+    overflow: hidden;
+  }
+  .hero-scan {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    animation: scan 6s linear infinite;
+    opacity: 0.4;
+  }
+  @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+  }
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 4px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-tag::before { content: ''; width: 40px; height: 1px; background: var(--cyan); }
+  .hero-h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: 4px;
+    color: var(--white);
+    margin-bottom: 8px;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero-h1 .omega-cyan { color: var(--cyan); text-shadow: 0 0 40px rgba(0,212,255,0.4); }
+  .hero-sub {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    letter-spacing: 5px;
+    color: var(--gold);
+    margin-bottom: 32px;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+  .hero-desc {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--dim);
+    max-width: 560px;
+    margin-bottom: 48px;
+    font-weight: 400;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .hero-btns {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+  .btn-primary {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--cyan);
+    padding: 14px 32px;
+    text-decoration: none;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    transition: all 0.2s;
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: var(--white); }
+  .btn-secondary {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 14px 32px;
+    text-decoration: none;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+  .hero-stats {
+    position: absolute;
+    bottom: 60px;
+    left: 6%;
+    right: 6%;
+    display: flex;
+    gap: 48px;
+    z-index: 2;
+    animation: fadeUp 0.8s 0.5s ease both;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    color: var(--cyan);
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(0,212,255,0.3);
+  }
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .cmd-prompt {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    color: var(--green);
+    display: block;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    text-shadow: 0 0 10px rgba(50, 205, 50, 0.4);
+    line-height: 1.5;
+    animation: fadeUp 0.8s 0.05s ease both;
+  }
+  .cursor { font-family: 'Share Tech Mono', monospace; color: var(--cyan); animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  [data-lucide] { width: 1em; height: 1em; stroke-width: 2; }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 2; padding: 100px 6%; }
+  .section-header { margin-bottom: 64px; }
+  .section-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 4px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .section-tag::before { content: '//'; opacity: 0.5; }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    letter-spacing: 3px;
+    color: var(--white);
+    line-height: 1;
+  }
+  .section-title span { color: var(--cyan); }
+
+  /* SERVICES */
+  #servicos { background: var(--bg2); }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2px;
+  }
+
+  .service-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 0;
+    background: var(--cyan);
+    transition: height 0.3s;
+  }
+  .service-card:hover::before { height: 100%; }
+  .service-card:hover {
+    border-color: rgba(0,212,255,0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .service-card.principal {
+    border-color: rgba(200,168,75,0.35);
+    background: linear-gradient(135deg, #0a1020 0%, #0d1225 100%);
+    grid-column: span 1;
+  }
+  .service-card.principal::before { background: var(--gold); }
+  .service-card.principal:hover { border-color: rgba(200,168,75,0.6); }
+  .service-badge {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 2px;
+    color: var(--bg);
+    background: var(--gold);
+    padding: 3px 10px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  }
+  .service-icon { font-size: 2rem; margin-bottom: 20px; display: block; }
+  .service-num {
+    position: absolute;
+    top: 28px; right: 28px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: rgba(0,212,255,0.05);
+    line-height: 1;
+  }
+  .service-card.principal .service-num { color: rgba(200,168,75,0.06); }
+  .service-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .service-desc { font-size: 0.95rem; line-height: 1.7; color: var(--dim); margin-bottom: 24px; }
+  .service-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 1px;
+    color: var(--cyan2);
+    border: 1px solid rgba(0,168,204,0.25);
+    padding: 4px 10px;
+    text-transform: uppercase;
+  }
+  .service-card.principal .tag {
+    color: var(--gold);
+    border-color: rgba(200,168,75,0.25);
+  }
+
+  /* ABOUT */
+  #sobre { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .about-visual { position: relative; }
+  .omega-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20rem;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(0,212,255,0.15);
+    line-height: 1;
+    text-align: center;
+    position: relative;
+    animation: float 6s ease-in-out infinite;
+  }
+  .omega-display::after {
+    content: 'Ω';
+    position: absolute;
+    inset: 0;
+    color: transparent;
+    -webkit-text-stroke: 0;
+    background: radial-gradient(ellipse at center, rgba(0,212,255,0.08) 0%, transparent 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20rem;
+  }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+  .about-frame {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--border);
+    clip-path: polygon(20px 0%, 100% 0%, calc(100% - 20px) 100%, 0% 100%);
+    pointer-events: none;
+  }
+  .about-content .section-header { margin-bottom: 32px; }
+  .about-text { font-size: 1.05rem; line-height: 1.8; color: var(--dim); margin-bottom: 20px; }
+  .highlight { color: var(--text); font-weight: 600; }
+  .cert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 32px; }
+  .cert-item {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    color: var(--dim);
+    border-left: 2px solid var(--gold);
+    padding: 6px 12px;
+    background: rgba(200,168,75,0.04);
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .cert-item:hover { color: var(--gold); }
+
+  /* DIFERENCIAIS */
+  #diferenciais { padding: 100px 6%; }
+  .diff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+  .diff-card {
+    padding: 40px 32px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .diff-card:hover { border-color: rgba(200,168,75,0.3); background: rgba(200,168,75,0.03); }
+  .diff-icon { font-size: 2.2rem; margin-bottom: 16px; }
+  .diff-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .diff-text { font-size: 0.92rem; line-height: 1.7; color: var(--dim); }
+
+  /* CONTACT */
+  #contacto { background: var(--bg2); }
+  .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .contact-info .section-header { margin-bottom: 40px; }
+  .contact-desc { font-size: 1.05rem; line-height: 1.8; color: var(--dim); margin-bottom: 48px; }
+  .contact-items { display: flex; flex-direction: column; gap: 20px; }
+  .contact-item { display: flex; align-items: center; gap: 16px; }
+  .contact-icon {
+    width: 44px; height: 44px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .contact-label { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; letter-spacing: 2px; color: var(--dim); text-transform: uppercase; }
+  .contact-val { font-size: 1rem; color: var(--text); font-weight: 500; }
+  .contact-form { display: flex; flex-direction: column; gap: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; letter-spacing: 2px; color: var(--dim); text-transform: uppercase; }
+  .form-group input, .form-group textarea, .form-group select {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 16px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--cyan); }
+  .form-group textarea { resize: vertical; min-height: 120px; }
+  .form-group select option { background: var(--panel); }
+  .btn-submit {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--cyan);
+    border: none;
+    padding: 16px 40px;
+    cursor: pointer;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    transition: all 0.2s;
+    align-self: flex-start;
+    font-weight: 700;
+  }
+  .btn-submit:hover { background: var(--white); }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 2;
+    padding: 40px 6%;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 4px; color: var(--dim); }
+  .footer-copy { font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; letter-spacing: 2px; color: var(--dim); text-transform: uppercase; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; letter-spacing: 2px; color: var(--dim); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--cyan); }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    #hero { flex-direction: column; align-items: center; justify-content: flex-start; min-height: auto; padding-bottom: 60px; }
+    #sobre { grid-template-columns: 1fr; gap: 40px; }
+    .about-visual { display: none; }
+    .contact-wrap { grid-template-columns: 1fr; gap: 40px; }
+    .diff-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .form-row { grid-template-columns: 1fr; }
+    .cert-grid { grid-template-columns: 1fr 1fr; }
+    .hero-btns { flex-direction: column; width: 100%; align-items: stretch; justify-content: center; gap: 12px; }
+    .hero-btns a { text-align: center; width: 100%; box-sizing: border-box; }
+    .hero-content { display: flex; flex-direction: column; align-items: center; text-align: center; margin: 0 auto; width: 100%; }
+    .hero-tag { justify-content: center; text-align: center; margin-bottom: 16px; }
+    .hero-tag::before { display: none; }
+    .hero-desc { text-align: center; margin-left: auto; margin-right: auto; margin-bottom: 24px; }
+    .cmd-prompt { text-align: center; width: 100%; margin-bottom: 12px; }
+    .hero-h1 { margin-bottom: 12px; }
+    .hero-sub { margin-bottom: 24px; }
+    .section-header { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .section-tag { justify-content: center; }
+    .about-text { text-align: center; }
+    .contact-info { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .contact-desc { text-align: center; }
+    .hero-stats { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 32px 10px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); width: 100%; }
+    .stat-item { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+    .stat-num { font-size: 2.2rem; margin-bottom: 6px; }
+    .stat-label { font-size: 0.65rem; text-align: center; margin-top: 0; }
+    footer { flex-direction: column; justify-content: center; text-align: center; gap: 20px; }
+    .footer-links { justify-content: center; flex-wrap: wrap; }
+    .footer-copy { line-height: 1.6; }
+  }
+
+  @media (max-width: 600px) {
+    section { padding: 60px 6%; }
+    #hero { padding: 100px 5% 50px; }
+    .hero-tag { font-size: 0.6rem; letter-spacing: 2px; line-height: 1.6; padding: 0 10px; margin-bottom: 20px; }
+    .cmd-prompt { font-size: clamp(0.65rem, 3.4vw, 0.9rem); white-space: nowrap; text-align: center; width: 100%; margin-bottom: 6px; letter-spacing: 1px; }
+    .hero-h1 { font-size: clamp(2.5rem, 12vw, 3.5rem); margin-bottom: 6px; line-height: 1; }
+    .hero-sub { font-size: clamp(0.8rem, 3.5vw, 1.1rem); letter-spacing: 3px; line-height: 1.4; padding: 0 10px; margin-bottom: 20px; }
+    .hero-desc { font-size: 0.95rem; line-height: 1.6; margin-bottom: 32px; padding: 0 10px; }
+    .stat-num { font-size: 1.8rem; }
+    .section-title { font-size: 2.2rem; }
+    .service-card { padding: 30px 20px; text-align: center; }
+    .service-tags { justify-content: center; }
+    .service-icon { margin: 0 auto 20px auto; }
+    .diff-card { padding: 30px 20px; }
+    .cert-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 4%; }
+    .nav-logo { gap: 8px; font-size: 1.5rem; }
+    .nav-brand { font-size: 1.05rem; letter-spacing: 2px; }
+    .nav-cta { font-size: 0.58rem; padding: 6px 12px; letter-spacing: 1px; clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%); }
+    .contact-icon { width: 36px; height: 36px; font-size: 0.9rem; }
+    .btn-submit { width: 100%; text-align: center; }
+    .contact-items { align-items: flex-start; text-align: left; width: 100%; max-width: 250px; margin: 0 auto; }
+    .contact-item { width: 100%; justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="nav-brand">TRI-ÔMEGA</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#diferenciais">Diferenciais</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="#contacto" class="nav-cta">Solicitar Proposta</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-scan"></div>
+  
+  <div class="hero-content">
+    <div class="hero-tag">Cibersegurança · Forense Digital · Angola</div>
+    <div class="cmd-prompt" id="cmd-prompt"></div>
+    <h1 class="hero-h1">
+      <span id="type-tri"></span><span id="type-omega" class="omega-cyan"></span><span class="cursor">_</span>
+    </h1>
+    <div class="hero-sub">Consciencialização. Protecção. Investigação. Inteligência.</div>
+    <p class="hero-desc">
+      A maioria dos ataques começa com um clique errado. A TRI-ÔMEGA forma e capacita as pessoas da sua organização para reconhecerem e resistirem a ameaças digitais — enquanto protege a sua infraestrutura e investiga os incidentes que acontecem.
+    </p>
+    <div class="hero-btns">
+      <a href="#servicos" class="btn-primary">Explorar Serviços</a>
+      <a href="#contacto" class="btn-secondary">Fale Connosco</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">9+</div>
+      <div class="stat-label">Anos de Experiência</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">15+</div>
+      <div class="stat-label">Certificações Técnicas</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Especialistas Locais</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Resposta a Incidentes</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="servicos">
+  <div class="section-header reveal">
+    <div class="section-tag">Capacidades Técnicas</div>
+    <h2 class="section-title">Os Nossos <span>Serviços</span></h2>
+  </div>
+  <div class="services-grid">
+
+    <!-- 01 CONSCIENCIALIZAÇÃO — SERVIÇO PRINCIPAL -->
+    <div class="service-card principal reveal">
+      <span class="service-badge">Serviço Principal</span>
+      <span class="service-num">01</span>
+      <span class="service-icon"><i data-lucide="graduation-cap"></i></span>
+      <div class="service-title">Consciencialização & Formação em Cibersegurança</div>
+      <p class="service-desc">O elo mais fraco é humano — nós fortalecemos esse elo. Programas de formação presencial e online adaptados ao contexto angolano. Simulações de phishing, workshops práticos e certificados de participação para transformar os seus colaboradores na primeira linha de defesa.</p>
+      <div class="service-tags">
+        <span class="tag">Security Awareness</span>
+        <span class="tag">Phishing Simulation</span>
+        <span class="tag">Relatório de Maturidade</span>
+        <span class="tag">Sector Público</span>
+      </div>
+    </div>
+
+    <!-- 02 FORENSE DIGITAL -->
+    <div class="service-card reveal">
+      <span class="service-num">02</span>
+      <span class="service-icon"><i data-lucide="microscope"></i></span>
+      <div class="service-title">Forense Digital & Resposta a Incidentes</div>
+      <p class="service-desc">Quando o incidente acontece, cada minuto conta. Investigação técnica de violações de dados, análise forense de dispositivos e redes, reconstrução de ataques e produção de relatórios técnicos detalhados para apoio corporativo e legal.</p>
+      <div class="service-tags">
+        <span class="tag">Análise de Evidências</span>
+        <span class="tag">Relatórios Técnicos</span>
+        <span class="tag">IR Playbooks</span>
+        <span class="tag">Malware Forensics</span>
+      </div>
+    </div>
+
+    <!-- 03 CIBERSEGURANÇA OFENSIVA & DEFENSIVA -->
+    <div class="service-card reveal">
+      <span class="service-num">03</span>
+      <span class="service-icon"><i data-lucide="shield"></i></span>
+      <div class="service-title">Cibersegurança Ofensiva & Defensiva</div>
+      <p class="service-desc">Testamos as suas defesas antes que os atacantes o façam. Testes de penetração, ethical hacking, auditoria de redes e endpoints, análise de malware e implementação de soluções de segurança enterprise.</p>
+      <div class="service-tags">
+        <span class="tag">Pentest</span>
+        <span class="tag">Ethical Hacking</span>
+        <span class="tag">Firewall & EDR</span>
+        <span class="tag">Malware Analysis</span>
+      </div>
+    </div>
+
+    <!-- 04 SOC -->
+    <div class="service-card reveal">
+      <span class="service-num">04</span>
+      <span class="service-icon"><i data-lucide="radio"></i></span>
+      <div class="service-title">Implementação de SOC & Capacitação</div>
+      <p class="service-desc">Implementamos e configuramos centros de operações de segurança adaptados à realidade angolana, com base em ferramentas open source e enterprise. Capacitamos a equipa interna do cliente para monitorização contínua e resposta a incidentes — com autonomia e conhecimento real.</p>
+      <div class="service-tags">
+        <span class="tag">Implementação de SOC</span>
+        <span class="tag">Correlação de Eventos</span>
+        <span class="tag">Detecção de Ameaças</span>
+        <span class="tag">Capacitação de Equipas</span>
+      </div>
+    </div>
+
+    <!-- 05 IA -->
+    <div class="service-card reveal">
+      <span class="service-num">05</span>
+      <span class="service-icon"><i data-lucide="bot"></i></span>
+      <div class="service-title">Segurança com Inteligência Artificial</div>
+      <p class="service-desc">IA ao serviço da cibersegurança — antes que os atacantes a usem contra si. Integração de ferramentas de inteligência artificial nos processos de análise e resposta a incidentes, aumentando a capacidade de detecção e velocidade de resposta.</p>
+      <div class="service-tags">
+        <span class="tag">Detecção de Anomalias</span>
+        <span class="tag">Automação de Processos</span>
+        <span class="tag">Dashboards Inteligentes</span>
+      </div>
+    </div>
+
+    <!-- 06 COMPLIANCE -->
+    <div class="service-card reveal">
+      <span class="service-num">06</span>
+      <span class="service-icon"><i data-lucide="scale"></i></span>
+      <div class="service-title">Compliance & Consultoria</div>
+      <p class="service-desc">Conformidade com a legislação angolana em matéria de cibersegurança — sem complicações. Apoio a auditoria de sistemas, consultoria estratégica de segurança e preparação para processos de contratação pública.</p>
+      <div class="service-tags">
+        <span class="tag">Lei Cibersegurança AO</span>
+        <span class="tag">Auditoria</span>
+        <span class="tag">Consultoria Estratégica</span>
+        <span class="tag">Sector Público</span>
+      </div>
+    </div>
+
+    <!-- 07 SHAREPOINT / GOVERNANÇA DOCUMENTAL -->
+    <div class="service-card reveal">
+      <span class="service-num">07</span>
+      <span class="service-icon"><i data-lucide="folder-lock"></i></span>
+      <div class="service-title">Governança Documental & Microsoft SharePoint</div>
+      <p class="service-desc">Informação desorganizada é um risco de segurança. Implementação de intranets seguras, portais internos e sistemas de gestão documental com controlo de acesso, auditoria e rastreabilidade integrados.</p>
+      <div class="service-tags">
+        <span class="tag">SharePoint</span>
+        <span class="tag">Intranet Segura</span>
+        <span class="tag">Gestão Documental</span>
+        <span class="tag">Controlo de Acesso</span>
+      </div>
+    </div>
+
+    <!-- 08 INFRAESTRUTURA & IDENTIDADE DIGITAL -->
+    <div class="service-card reveal">
+      <span class="service-num">08</span>
+      <span class="service-icon"><i data-lucide="server"></i></span>
+      <div class="service-title">Infraestrutura & Identidade Digital</div>
+      <p class="service-desc">Identidade digital segura é o alicerce de tudo o resto. Implementação de correio electrónico corporativo institucional, gestão de Active Directory e domínios institucionais com dados armazenados em conformidade com a legislação angolana.</p>
+      <div class="service-tags">
+        <span class="tag">E-mail Corporativo</span>
+        <span class="tag">Active Directory</span>
+        <span class="tag">DNS Seguro</span>
+        <span class="tag">Dados em Angola</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="sobre">
+  <div class="about-visual reveal">
+    <div class="omega-display">Ω</div>
+    <div class="about-frame"></div>
+  </div>
+  <div class="about-content">
+    <div class="section-header reveal">
+      <div class="section-tag">Sobre a Empresa</div>
+      <h2 class="section-title">Raiz <span>Angolana</span>,<br>Padrão <span>Global</span></h2>
+    </div>
+    <p class="about-text reveal">
+      A <span class="highlight">TRI-ÔMEGA</span> nasce da convergência entre expertise forense de alto nível, formação em cibersegurança e desenvolvimento tecnológico de ponta. Somos uma startup angolana certificada, construída por profissionais com vasta experiência em infraestruturas críticas nacionais. Acreditamos que a segurança digital começa pelas pessoas — por isso colocamos a consciencialização e a formação no centro da nossa missão.
+    </p>
+    <p class="about-text reveal">
+      Com mais de <span class="highlight">9 anos de experiência operacional</span> em infraestruturas críticas em Angola, trazemos conhecimento real sobre os desafios de segurança que as organizações angolanas enfrentam — não teoria importada, mas prática construída localmente.
+    </p>
+    <div class="cert-grid reveal">
+      <div class="cert-item">Ethical Hacking & Testes de Intrusão</div>
+      <div class="cert-item">Segurança de Redes & Infraestrutura</div>
+      <div class="cert-item">Segurança de Endpoints & Nuvem</div>
+      <div class="cert-item">Gestão de Identidade & Acessos</div>
+      <div class="cert-item">Operações de Segurança (SOC)</div>
+      <div class="cert-item">Forense Digital & Análise de Malware</div>
+      <div class="cert-item">Protecção contra DDoS & Disponibilidade</div>
+      <div class="cert-item">Conformidade & Auditoria de Segurança</div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFERENCIAIS -->
+<section id="diferenciais">
+  <div class="section-header reveal">
+    <div class="section-tag">Porquê a TRI-ÔMEGA</div>
+    <h2 class="section-title">Os Nossos <span>Diferenciais</span></h2>
+  </div>
+  <div class="diff-grid">
+    <div class="diff-card reveal">
+      <div class="diff-icon"><i data-lucide="map-pin"></i></div>
+      <div class="diff-title">100% Angolanos</div>
+      <p class="diff-text">Empresa local com profundo conhecimento do mercado, regulamentação e desafios específicos do contexto angolano. Sem intermediários estrangeiros.</p>
+    </div>
+    <div class="diff-card reveal">
+      <div class="diff-icon"><i data-lucide="medal"></i></div>
+      <div class="diff-title">Experiência Comprovada</div>
+      <p class="diff-text">Mais de 9 anos de experiência operacional em infraestruturas críticas angolanas. Não vendemos teoria — entregamos resultados construídos e testados no terreno.</p>
+    </div>
+    <div class="diff-card reveal">
+      <div class="diff-icon"><i data-lucide="bot"></i></div>
+      <div class="diff-title">IA como Vantagem</div>
+      <p class="diff-text">Integramos ferramentas de inteligência artificial nos nossos processos de análise e resposta, aumentando a capacidade de detecção e a velocidade de reacção a incidentes.</p>
+    </div>
+    <div class="diff-card reveal">
+      <div class="diff-icon"><i data-lucide="bar-chart-2"></i></div>
+      <div class="diff-title">Formação com Impacto Mensurável</div>
+      <p class="diff-text">Os nossos programas de consciencialização incluem métricas de antes e depois — taxa de cliques em phishing, nível de maturidade de segurança e relatório de evolução da equipa.</p>
+    </div>
+    <div class="diff-card reveal">
+      <div class="diff-icon"><i data-lucide="lock"></i></div>
+      <div class="diff-title">Confidencialidade Total</div>
+      <p class="diff-text">Todos os contratos incluem acordos de não divulgação (NDA) robustos. A sua segurança e reputação são o nosso compromisso.</p>
+    </div>
+    <div class="diff-card reveal">
+      <div class="diff-icon"><i data-lucide="zap"></i></div>
+      <div class="diff-title">Resposta Ágil 24/7</div>
+      <p class="diff-text">Incidentes não têm horário. Disponibilizamos resposta a emergências de segurança com tempo de reacção mínimo, em qualquer momento do dia.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contacto">
+  <div class="contact-wrap">
+    <div class="contact-info">
+      <div class="section-header reveal">
+        <div class="section-tag">Entre em Contacto</div>
+        <h2 class="section-title">Vamos <span>Trabalhar</span><br>Juntos</h2>
+      </div>
+      <p class="contact-desc reveal">
+        Seja para uma auditoria de segurança, investigação forense, programa de formação ou implementação de infraestrutura, estamos prontos para proteger a sua organização. Solicite uma consulta inicial sem compromisso.
+      </p>
+      <div class="contact-items reveal">
+        <div class="contact-item">
+          <div class="contact-icon"><i data-lucide="mail"></i></div>
+          <div>
+            <div class="contact-label">Email</div>
+            <div class="contact-val">geral@tri-omega.ao</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i data-lucide="phone"></i></div>
+          <div>
+            <div class="contact-label">Telefone / WhatsApp</div>
+            <div class="contact-val">+244 9XX XXX XXX</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i data-lucide="map-pin"></i></div>
+          <div>
+            <div class="contact-label">Localização</div>
+            <div class="contact-val">Luanda, Angola</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form class="contact-form reveal" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome Completo</label>
+          <input type="text" placeholder="O seu nome">
+        </div>
+        <div class="form-group">
+          <label>Organização</label>
+          <input type="text" placeholder="Empresa / Instituição">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Corporativo</label>
+        <input type="email" placeholder="email@empresa.ao">
+      </div>
+      <div class="form-group">
+        <label>Serviço de Interesse</label>
+        <select>
+          <option value="">Selecionar serviço...</option>
+          <option>Consciencialização & Formação em Cibersegurança</option>
+          <option>Forense Digital & Resposta a Incidentes</option>
+          <option>Cibersegurança Ofensiva & Defensiva</option>
+          <option>SOC & Monitorização Contínua</option>
+          <option>Segurança com Inteligência Artificial</option>
+          <option>Compliance & Consultoria</option>
+          <option>Governança Documental & Microsoft SharePoint</option>
+          <option>Infraestrutura & Identidade Digital</option>
+          <option>Múltiplos Serviços / Outro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Mensagem</label>
+        <textarea placeholder="Descreva brevemente o que precisa..."></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Enviar Mensagem →</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">TRI-ÔMEGA</div>
+  <div class="footer-copy">&copy; 2025 TRI-ÔMEGA · Todos os direitos reservados · Luanda, Angola</div>
+  <div class="footer-links">
+    <a href="#servicos">Serviços</a>
+    <a href="#sobre">Sobre</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, entry.target.dataset.delay || 0);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.dataset.delay = (i % 4) * 80;
+    observer.observe(el);
+  });
+
+  // Active nav
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+    navLinks.forEach(a => { a.style.color = a.getAttribute('href') === '#' + current ? 'var(--cyan)' : ''; });
+  });
+
+  // Lucide Icons
+  lucide.createIcons();
+
+  // Typewriter
+  const cmdPrompt = "root@system:~# ./start_defense.sh";
+  const titlePart1 = "TRI-";
+  const titlePart2 = "ÔMEGA";
+  const promptEl = document.getElementById('cmd-prompt');
+  const typeTriEl = document.getElementById('type-tri');
+  const typeOmegaEl = document.getElementById('type-omega');
+  let i = 0, t1 = 0, t2 = 0;
+
+  function typePrompt() {
+    if (i < cmdPrompt.length) { promptEl.innerHTML += cmdPrompt.charAt(i); i++; setTimeout(typePrompt, 50); }
+    else { setTimeout(typePart1, 400); }
+  }
+  function typePart1() {
+    if (t1 < titlePart1.length) { typeTriEl.innerHTML += titlePart1.charAt(t1); t1++; setTimeout(typePart1, 100); }
+    else { setTimeout(typePart2, 100); }
+  }
+  function typePart2() {
+    if (t2 < titlePart2.length) { typeOmegaEl.innerHTML += titlePart2.charAt(t2); t2++; setTimeout(typePart2, 100); }
+  }
+  setTimeout(typePrompt, 800);
+</script>
+</body>
+</html>
